@@ -7,6 +7,59 @@ Kotlin + Spring Boot REST API for Stashbox.
 - Build tool: Gradle (wrapper included, no local Gradle needed)
 - Data: PostgreSQL via Spring Data JPA (Postgres runs locally in Docker)
 
+## 0. From scratch on a brand-new Mac
+
+If nothing is installed yet, do these once, in order. (Skip any step where the tool is already present.)
+
+### a. Install Homebrew (the Mac package manager)
+Open Terminal and run:
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+After it finishes it prints two `echo ... >> ~/.zprofile` + `eval` lines, run those so `brew` is on your PATH. Verify:
+```bash
+brew --version
+```
+
+### b. Install Git (if not already there)
+macOS may prompt to install the Xcode Command Line Tools the first time you run `git`. Either accept that, or:
+```bash
+brew install git
+git --version
+```
+
+### c. Install a Java 21 JDK
+The build targets Java 21 (via a Gradle toolchain). Gradle itself also needs a JDK to run, so this must be installed before `./gradlew` will work.
+```bash
+brew install --cask temurin@21
+java -version          # should report a version 21.x
+```
+(If `java -version` still shows a different version, the Temurin install registered a JDK 21 that Gradle's toolchain will pick up for the build; that's fine.)
+
+### d. Install Docker Desktop (for the PostgreSQL database)
+```bash
+brew install --cask docker
+```
+Then open Docker Desktop once from Applications (or `open -a Docker`) and wait until the whale icon in the menu bar is steady. Verify the daemon is up:
+```bash
+docker --version
+docker info        # should print server info, not an error
+```
+
+### e. Get the code (clone the private repo)
+The repo is private, so you need access. Easiest is the GitHub CLI:
+```bash
+brew install gh
+gh auth login                       # follow the browser prompt to sign in
+gh repo clone kant-piyush/stashbox   # clones into ./stashbox
+cd stashbox/backend
+```
+(Alternatively, if SSH keys are set up on the new Mac: `git clone git@github.com:kant-piyush/stashbox.git`.)
+
+Now continue with step 1 below.
+
+---
+
 ## 1. Start the database (Docker)
 
 The app needs a PostgreSQL database. Run one in Docker:
@@ -28,12 +81,22 @@ docker run -d \
 
 ## 2. Run the app
 
+From the `backend/` folder:
 ```bash
-cd backend
+cd backend          # if not already there
 ./gradlew bootRun
 ```
 
-The API starts on `http://localhost:8080`. On first run, Hibernate auto-creates the `stash_item` table from the entity (`spring.jpa.hibernate.ddl-auto=update`).
+The first run downloads Gradle (via the wrapper) and all dependencies, so it takes a few minutes. The API starts on `http://localhost:8080`. On first run, Hibernate auto-creates the `stash_item` table from the entity (`spring.jpa.hibernate.ddl-auto=update`).
+
+Stop the app with `Ctrl+C` in the terminal (or the stop button in IntelliJ).
+
+### Whole sequence at a glance (after the one-time step 0)
+```bash
+docker start stashbox-postgres      # or the `docker run ...` below if it doesn't exist yet
+cd stashbox/backend
+./gradlew bootRun                   # API at http://localhost:8080
+```
 
 ## Try the endpoints (full CRUD)
 
