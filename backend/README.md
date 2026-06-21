@@ -46,7 +46,12 @@ docker --version
 docker info        # should print server info, not an error
 ```
 
-### e. Get the code (clone the private repo)
+### e. Install jq (for pretty-printing API responses) — optional but handy
+```bash
+brew install jq
+```
+
+### f. Get the code (clone the private repo)
 The repo is private, so you need access. Easiest is the GitHub CLI:
 ```bash
 brew install gh
@@ -100,28 +105,30 @@ cd stashbox/backend
 
 ## Try the endpoints (full CRUD)
 
+We pipe responses through `jq` for clean, readable JSON (`-s` makes curl quiet so only the JSON shows). Install jq once with `brew install jq`.
+
 ```bash
 # list all items
-curl http://localhost:8080/items
+curl -s http://localhost:8080/items | jq
 
 # create
-curl -X POST http://localhost:8080/items \
+curl -s -X POST http://localhost:8080/items \
   -H "Content-Type: application/json" \
-  -d '{"text":"reply to PM","link":"https://slack.com/...","status":"OPEN"}'
+  -d '{"text":"reply to PM","link":"https://slack.com/...","status":"OPEN"}' | jq
 
 # get one by id (404 if missing)
-curl http://localhost:8080/items/<id>
+curl -s http://localhost:8080/items/<id> | jq
 
 # update (keeps id + createdAt; 404 if missing)
-curl -X PUT http://localhost:8080/items/<id> \
+curl -s -X PUT http://localhost:8080/items/<id> \
   -H "Content-Type: application/json" \
-  -d '{"text":"replied - done","status":"DONE"}'
+  -d '{"text":"replied - done","status":"DONE"}' | jq
 
-# delete (204, or 404 if missing)
+# delete (204 with no body, or 404 if missing) - use -i to see the status line
 curl -i -X DELETE http://localhost:8080/items/<id>
 ```
 
-Status values: `OPEN` or `DONE`.
+Status values: `OPEN` or `DONE`. (The DELETE call keeps `-i` and no `jq`, since a successful delete returns no body, just the 204 status.)
 
 ## Build and test
 
