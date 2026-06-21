@@ -35,13 +35,20 @@ Stashbox: stash Slack messages (or links) that are tasks or replies to deal with
 
 Goal: get comfortable with the Spring Boot request flow. Should feel familiar as a Kotlin developer.
 
-- [ ] Generate a Spring Boot project (Spring Initializr): Kotlin, Web, base package `io.github.kantpiyush.stashbox`.
-- [ ] Define a `StashItem` model: `id`, `text`, `link`, `status` (`TODO`/`REPLY_LATER`/`DONE`), `createdAt`.
-- [ ] Build a `StashItemController` with CRUD endpoints backed by an in-memory list (no DB yet):
-  - `GET /items`, `GET /items/{id}`, `POST /items`, `PUT /items/{id}`, `DELETE /items/{id}`.
+- [x] Generate a Spring Boot project (Kotlin, Web, base package `io.github.kantpiyush.stashbox`). Scaffolded under `backend/`, Spring Boot 3.4.1 / Kotlin 1.9.25 / Java 21, builds and runs.
+- [x] Define a `StashItem` model: `id`, `text`, `link`, `status` (`TODO`/`REPLY_LATER`/`DONE`), `createdAt`.
+- [x] `GET /items` and `GET /items/{id}` done as worked examples.
+- [ ] **Your exercises:** implement `POST /items`, `PUT /items/{id}`, `DELETE /items/{id}`. They're stubs in `StashItemController.kt` (each returns 501 with a hint comment until you build it).
 - [ ] Run locally and exercise every endpoint with curl or Postman.
 
-**Milestone:** a working REST API in memory.
+**How to work this phase (read-then-build rhythm):**
+
+- Don't read the whole tutorial first. Skim the intro once (~5 min) just for the shape.
+- Generate/boot the app, prove it runs, then go one endpoint at a time: read only the slice you need, implement that endpoint, test with curl, stop.
+- Rule of thumb: if you've read for more than ~15 min without writing code, stop and start typing. Learn the gap by hitting the error, then read the specific fix.
+- Skip the tutorial's Mustache/HTML blog parts. Stashbox is API-only.
+
+**Milestone:** a working REST API in memory (all five CRUD endpoints).
 
 ---
 
@@ -135,6 +142,36 @@ Goal: complete the dev-to-live lifecycle.
 | 5a | Android: build APK or AAB | matrix builds, artifacts, SDK setup |
 | 5b | iOS: build on macOS | `runs-on: macos`, manual code signing |
 | 6 | Web: deploy to S3 and CloudFront | Node setup, `aws s3 sync`, cache invalidation |
+
+---
+
+## AWS course mapping (read a section, then use it in the app)
+
+Using the Udemy AWS DVA-C02 course (34 sections total). The course is built for the certification, so it covers far more than Stashbox needs. Watch a section right before the phase that uses it, then apply it immediately. Don't watch ahead.
+
+**Watch these, mapped to phases:**
+
+| When (phase) | Sections to watch | What you do in Stashbox |
+|---|---|---|
+| Setup (Phase 0) | S1 Intro, S3 Getting Started, S4 IAM & AWS CLI | Create AWS account, set up IAM users/roles (never use root), install + configure AWS CLI |
+| Deploy backend (Phase 3) | S5 EC2 Fundamentals, S8 RDS + Aurora + ElastiCache, S17 Elastic Beanstalk | RDS for managed Postgres; Elastic Beanstalk to deploy the Spring Boot jar (watch EC2 first, EB sits on top) |
+| Deploy web (Phase 6) | S11 S3 Intro, S14 S3 Security, S15 CloudFront | Host the Vue static site on S3, serve via CloudFront |
+| File uploads (Phase 7) | S13 Advanced S3, S12 CLI/SDK/IAM Roles | Presigned URLs to upload attachments to S3 |
+| Auth (Phase 7) | S27 Cognito | Login + per-user data across all three clients |
+| Optional, once live | S20 CloudWatch / X-Ray / CloudTrail | Logs and monitoring (nice to have, not required to ship) |
+
+**Skip for building Stashbox (watch later, cert-only):**
+
+- S6 EC2 Storage, S7 ELB + ASG (scaling, not needed at this size)
+- S9 Route 53, S10 VPC (networking depth, EB handles enough)
+- S16 ECS/ECR/Fargate (Docker on AWS, alternative to EB to explore later)
+- S18 CloudFormation, S26 CDK (infra-as-code, overkill for now)
+- S19 SQS/SNS/Kinesis, S28 Step Functions/AppSync (messaging/orchestration)
+- S21 Lambda, S22 DynamoDB, S23 API Gateway, S25 SAM (the serverless backend path; we chose Spring Boot + RDS instead, so cert-only here)
+- S24 AWS CICD (CodePipeline etc.; we chose GitHub Actions, so cert-only)
+- S29 Advanced Identity, S30 Security/KMS, S31 Other Services, S32-S34 (exam prep and cleanup)
+
+Note: the serverless half of the course (Lambda, DynamoDB, API Gateway, SAM) is a completely different way to build a backend than our Spring Boot + RDS path. You'll need it for the cert, not for Stashbox. Circle back to it for exam prep after the app is built.
 
 ---
 
