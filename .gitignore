@@ -1,0 +1,50 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.fleet/
+
+# Gradle / Kotlin / JVM
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+local.properties
+*.log
+*.hprof
+
+# Android
+*.apk
+*.aab
+*.keystore
+*.jks
+captures/
+
+# iOS / Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+*.xcworkspace/xcuserdata/
+Pods/
+
+# Node / Vue / web
+node_modules/
+dist/
+.vite/
+*.local
+.env
+.env.*
+!.env.example
+
+# AWS / secrets
+*.pem
+.aws-credentials
+secrets.*
+
+# Misc
+*.tmp
