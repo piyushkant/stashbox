@@ -20,14 +20,12 @@ Stashbox: stash Slack messages (or links) that are tasks or replies to deal with
 
 ---
 
-## Phase 0, Foundations (ongoing, alongside the AWS course)
+## Phase 0, Foundations
 
-- [ ] Continue the AWS DVA-C02 course, but use each service as you learn it instead of binge-watching.
-  - Priority sections early: IAM, EC2, S3, RDS, Elastic Beanstalk or ECS. Later: Lambda, API Gateway, Cognito.
+Goal: the basics needed to start building.
+
 - [x] GitHub account and private monorepo created.
-- [ ] AWS free-tier account set up.
-- [ ] AWS CLI installed and configured on the Mac (`aws configure`).
-- [ ] Docker installed locally (for running Postgres).
+- [x] Local toolchain ready: Java 21, IntelliJ IDEA Ultimate (main IDE for backend + web), Android Studio + Xcode for mobile.
 
 ---
 
@@ -37,18 +35,17 @@ Goal: get comfortable with the Spring Boot request flow. Should feel familiar as
 
 - [x] Generate a Spring Boot project (Kotlin, Web, base package `io.github.kantpiyush.stashbox`). Scaffolded under `backend/`, Spring Boot 3.4.1 / Kotlin 1.9.25 / Java 21, builds and runs.
 - [x] Define a `StashItem` model: `id`, `text`, `link`, `status` (`OPEN`/`DONE`), `createdAt`.
-- [x] `GET /items` and `GET /items/{id}` done as worked examples.
-- [ ] **Your exercises:** implement `POST /items`, `PUT /items/{id}`, `DELETE /items/{id}`. They're stubs in `StashItemController.kt` (each returns 501 with a hint comment until you build it).
-- [ ] Run locally and exercise every endpoint with curl or Postman.
+- [x] `GET /items` and `GET /items/{id}` (Read).
+- [x] `POST /items` (Create), `PUT /items/{id}` (Update), `DELETE /items/{id}` (Delete).
+- [x] Run locally and exercise every endpoint with curl. All five CRUD endpoints verified working.
 
 **How to work this phase (read-then-build rhythm):**
 
 - Don't read the whole tutorial first. Skim the intro once (~5 min) just for the shape.
-- Generate/boot the app, prove it runs, then go one endpoint at a time: read only the slice you need, implement that endpoint, test with curl, stop.
-- Rule of thumb: if you've read for more than ~15 min without writing code, stop and start typing. Learn the gap by hitting the error, then read the specific fix.
+- Boot the app, prove it runs, then go one endpoint at a time: read only the slice you need, understand the code, test with curl, stop.
 - Skip the tutorial's Mustache/HTML blog parts. Stashbox is API-only.
 
-**Milestone:** a working REST API in memory (all five CRUD endpoints).
+**Milestone:** DONE. A working REST API in memory (all five CRUD endpoints).
 
 ---
 
@@ -56,6 +53,7 @@ Goal: get comfortable with the Spring Boot request flow. Should feel familiar as
 
 Goal: a real database behind the API.
 
+- [ ] Install Docker locally (first needed here, for running Postgres).
 - [ ] Run Postgres locally via Docker.
 - [ ] Add Spring Data JPA and the Postgres driver.
 - [ ] Make `StashItem` an `@Entity` and create a `StashItemRepository`.
@@ -68,8 +66,10 @@ Goal: a real database behind the API.
 
 ## Phase 3, Deploy backend to AWS (first real cloud milestone)
 
-Goal: the API reachable at a public URL. This is where the AWS course pays off.
+Goal: the API reachable at a public URL. This is where the AWS course pays off, and where AWS first enters the project.
 
+- [ ] Set up an AWS free-tier account, with an IAM user (not root) for day-to-day use. (Course sections S3 Getting Started, S4 IAM & AWS CLI.)
+- [ ] Install and configure the AWS CLI on the Mac (`aws configure`).
 - [ ] Provision a PostgreSQL database on AWS RDS.
 - [ ] Deploy the API. Start with Elastic Beanstalk since it hides most of the infra. EC2 plus RDS is the alternative or next step.
 - [ ] Configure the DB connection via environment variables and secrets, not hardcoded.
@@ -153,7 +153,7 @@ Using the Udemy AWS DVA-C02 course (34 sections total). The course is built for 
 
 | When (phase) | Sections to watch | What you do in Stashbox |
 |---|---|---|
-| Setup (Phase 0) | S1 Intro, S3 Getting Started, S4 IAM & AWS CLI | Create AWS account, set up IAM users/roles (never use root), install + configure AWS CLI |
+| AWS setup (Phase 3) | S1 Intro, S3 Getting Started, S4 IAM & AWS CLI | Create AWS account, set up IAM users/roles (never use root), install + configure AWS CLI |
 | Deploy backend (Phase 3) | S5 EC2 Fundamentals, S8 RDS + Aurora + ElastiCache, S17 Elastic Beanstalk | RDS for managed Postgres; Elastic Beanstalk to deploy the Spring Boot jar (watch EC2 first, EB sits on top) |
 | Deploy web (Phase 6) | S11 S3 Intro, S14 S3 Security, S15 CloudFront | Host the Vue static site on S3, serve via CloudFront |
 | File uploads (Phase 7) | S13 Advanced S3, S12 CLI/SDK/IAM Roles | Presigned URLs to upload attachments to S3 |
