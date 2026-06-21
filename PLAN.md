@@ -12,7 +12,7 @@ A full-stack learning roadmap, ordered so each phase produces something working 
 
 ## Product recap
 
-Stashbox: stash Slack messages (or links) that are tasks or replies to deal with later. One backend and database, three clients (Android, iOS, web) sharing the same data. Item status: `TODO`, `REPLY_LATER`, or `DONE`. See [README.md](./README.md) for architecture and tech stack.
+Stashbox: stash Slack messages (or links) that are tasks or replies to deal with later. One backend and database, three clients (Android, iOS, web) sharing the same data. Item status: `OPEN` or `DONE` for now (a `REPLY_LATER` status can be added back later). See [README.md](./README.md) for architecture and tech stack.
 
 - **App name:** Stashbox
 - **Bundle/App ID (all platforms):** `io.github.kantpiyush.stashbox`
@@ -36,7 +36,7 @@ Stashbox: stash Slack messages (or links) that are tasks or replies to deal with
 Goal: get comfortable with the Spring Boot request flow. Should feel familiar as a Kotlin developer.
 
 - [x] Generate a Spring Boot project (Kotlin, Web, base package `io.github.kantpiyush.stashbox`). Scaffolded under `backend/`, Spring Boot 3.4.1 / Kotlin 1.9.25 / Java 21, builds and runs.
-- [x] Define a `StashItem` model: `id`, `text`, `link`, `status` (`TODO`/`REPLY_LATER`/`DONE`), `createdAt`.
+- [x] Define a `StashItem` model: `id`, `text`, `link`, `status` (`OPEN`/`DONE`), `createdAt`.
 - [x] `GET /items` and `GET /items/{id}` done as worked examples.
 - [ ] **Your exercises:** implement `POST /items`, `PUT /items/{id}`, `DELETE /items/{id}`. They're stubs in `StashItemController.kt` (each returns 501 with a hint comment until you build it).
 - [ ] Run locally and exercise every endpoint with curl or Postman.

@@ -13,7 +13,7 @@ I collect a lot of Slack messages that are really to-dos: "I need to do this" or
 Core functionality (built up bit by bit):
 
 - **Capture** an item: a free-text note plus a link (for example a Slack message URL).
-- **Status** per item: `TODO` (need to do something), `REPLY_LATER` (need to reply), or `DONE`.
+- **Status** per item: `OPEN` (still to act on) or `DONE`. (A `REPLY_LATER` status may be added back later to distinguish "need to reply" from "need to do".)
 - **List and filter** items by status across all clients.
 - **Mark done or update** an item, and the state syncs to every client.
 - **Delete** an item.
@@ -116,7 +116,7 @@ A single `StashItem` entity, designed to grow:
 | `id` | UUID or Long | Primary key |
 | `text` | String | The note or context you jot down |
 | `link` | String? | The Slack message (or other) URL |
-| `status` | Enum | `TODO`, `REPLY_LATER`, or `DONE` |
+| `status` | Enum | `OPEN` or `DONE` (may add `REPLY_LATER` later) |
 | `createdAt` | Timestamp | |
 | `userId` | (later) | For per-user data once auth is added |
 | `attachmentUrl` | (later) | For S3 image and file uploads |

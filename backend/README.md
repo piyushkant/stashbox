@@ -27,7 +27,7 @@ curl http://localhost:8080/items/some-id
 # create (not implemented yet, returns 501 until you build it)
 curl -X POST http://localhost:8080/items \
   -H "Content-Type: application/json" \
-  -d '{"text":"reply to PM","link":"https://slack.com/...","status":"REPLY_LATER"}'
+  -d '{"text":"reply to PM","link":"https://slack.com/...","status":"OPEN"}'
 ```
 
 ## Build and test

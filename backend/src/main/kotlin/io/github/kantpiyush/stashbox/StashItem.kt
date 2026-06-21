@@ -4,8 +4,7 @@ import java.time.Instant
 import java.util.UUID
 
 enum class StashStatus {
-	TODO,
-	REPLY_LATER,
+	OPEN,
 	DONE,
 }
 
@@ -14,7 +13,7 @@ data class StashItem(
 	val id: String = UUID.randomUUID().toString(),
 	val text: String,
 	val link: String? = null,
-	val status: StashStatus = StashStatus.TODO,
+	val status: StashStatus = StashStatus.OPEN,
 	val createdAt: Instant = Instant.now(),
 )
 
@@ -23,5 +22,5 @@ data class StashItem(
 data class StashItemRequest(
 	val text: String,
 	val link: String? = null,
-	val status: StashStatus = StashStatus.TODO,
+	val status: StashStatus = StashStatus.OPEN,
 )
