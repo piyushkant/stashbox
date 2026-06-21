@@ -105,7 +105,17 @@ stashbox/
 └── README.md
 ```
 
-I went with a monorepo on purpose. It keeps the whole stack in one place, so the full flow (DB to API to clients to deploy) is easy to see and wire together while learning.
+Each part has its own README with run instructions and study notes. This root README is the map that connects them:
+
+| Part | What it is | Status | Details |
+|---|---|---|---|
+| [backend](./backend/README.md) | Kotlin + Spring Boot REST API, PostgreSQL via JPA | CRUD + persistence done | [backend/README.md](./backend/README.md) |
+| [web](./web/README.md) | Vue 3 + Vite web client | not started (Phase 8) | [web/README.md](./web/README.md) |
+| [mobile](./mobile/README.md) | KMP app, Android (Compose) + iOS (SwiftUI) | not started (Phase 9) | [mobile/README.md](./mobile/README.md) |
+
+See [PLAN.md](./PLAN.md) for the full phased roadmap.
+
+I went with a monorepo on purpose. It keeps the whole stack in one place, so the full flow (DB to API to clients to deploy) is easy to see and wire together while learning. Each folder's README stays focused on that part; this root README ties them together.
 
 ---
 
