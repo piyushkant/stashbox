@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/items")
 class StashItemController(
-    private val store: StashItemStore,
+    private val service: StashItemService,
 ) {
     // GET /items -> list every stashed item.
     // Example:
     //   curl http://localhost:8080/items
     @GetMapping
-    fun getAll(): List<StashItem> = store.findAll()
+    fun getAll(): List<StashItem> = service.findAll()
 
     // GET /items/{id} -> one item, or 404 if it doesn't exist.
     // Example:
     //   curl http://localhost:8080/items/3836eb3f-0ef9-4f68-9ad6-fa37078469bd
     @GetMapping("/{id}")
     fun getOne(@PathVariable id: String): ResponseEntity<StashItem> {
-        val item = store.findById(id)
+        val item = service.findById(id)
         return if (item != null) {
             ResponseEntity.ok(item)
         } else {
@@ -48,7 +48,7 @@ class StashItemController(
             link = request.link,
             status = request.status,
         )
-        val saved = store.save(item)
+        val saved = service.save(item)
         return ResponseEntity.status(HttpStatus.CREATED).body(saved)
     }
 
@@ -64,15 +64,17 @@ class StashItemController(
         @PathVariable id: String,
         @RequestBody request: StashItemRequest,
     ): ResponseEntity<StashItem> {
-        val existing = store.findById(id)
+        val existing = service.findById(id)
             ?: return ResponseEntity.notFound().build()
 
-        val updated = existing.copy(
-            text = request.text,
-            link = request.link,
-            status = request.status,
-        )
-        val saved = store.save(updated)
+        // StashItem is now a regular (mutable) entity, not a data class, so there's
+        // no copy(). We set the changed fields directly; id and createdAt stay as they
+        // were. Saving an entity with an existing id updates that row (UPDATE, not INSERT).
+        existing.text = request.text
+        existing.link = request.link
+        existing.status = request.status
+
+        val saved = service.save(existing)
         return ResponseEntity.ok(saved)
     }
 
@@ -82,7 +84,7 @@ class StashItemController(
     //   -> HTTP/1.1 204 No Content   (404 if the id doesn't exist)
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: String): ResponseEntity<Void> {
-        val removed = store.deleteById(id)
+        val removed = service.deleteById(id)
         return if (removed) {
             ResponseEntity.noContent().build()
         } else {

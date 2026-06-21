@@ -53,14 +53,13 @@ Goal: get comfortable with the Spring Boot request flow. Should feel familiar as
 
 Goal: a real database behind the API.
 
-- [ ] Install Docker locally (first needed here, for running Postgres).
-- [ ] Run Postgres locally via Docker.
-- [ ] Add Spring Data JPA and the Postgres driver.
-- [ ] Make `StashItem` an `@Entity` and create a `StashItemRepository`.
-- [ ] Swap the in-memory list for the repository.
-- [ ] Verify data survives an app restart.
+- [x] Install Docker locally; run Postgres 16 in a container (`stashbox-postgres`, named volume for persistence).
+- [x] Add Spring Data JPA, the Kotlin JPA plugin, and the Postgres driver.
+- [x] Make `StashItem` a JPA `@Entity` (regular class, not data class; `var` fields; `@Enumerated(STRING)` for status) and create `StashItemRepository`.
+- [x] Introduce a service layer behind an interface (`StashItemService` + `StashItemServiceImpl`); controller depends on the interface. Swap the in-memory store for the repository.
+- [x] Verify data survives an app restart (confirmed: item persisted across a full restart).
 
-**Milestone:** DB-backed API running locally.
+**Milestone:** DONE. DB-backed API running locally on Postgres.
 
 ---
 
