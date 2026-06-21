@@ -68,12 +68,16 @@ Goal: a real database behind the API.
 
 Goal: the API reachable at a public URL. This is where the AWS course pays off, and where AWS first enters the project.
 
-- [ ] Set up an AWS free-tier account, with an IAM user (not root) for day-to-day use. (Course sections S3 Getting Started, S4 IAM & AWS CLI.)
+- [ ] Set up an AWS free-tier account. The Udemy course covers this (S3 Getting Started), so create the account there, not separately. A card is required, but charges only apply above free-tier limits.
+- [ ] **FIRST, before creating any chargeable resource: set up a billing budget + alarm** (threshold ~$1-$5). The course covers this in S4. Do it the instant the account exists, billing data lags by hours, so an alarm set "after I notice a charge" is too late.
+- [ ] Set up an IAM user (not root) for day-to-day use. (Course S4 IAM & AWS CLI.)
 - [ ] Install and configure the AWS CLI on the Mac (`aws configure`).
-- [ ] Provision a PostgreSQL database on AWS RDS.
-- [ ] Deploy the API. Start with Elastic Beanstalk since it hides most of the infra. EC2 plus RDS is the alternative or next step.
+- [ ] Provision a PostgreSQL database on AWS RDS (free-tier `db.t3.micro` + 20 GB).
+- [ ] Deploy the API. Start with Elastic Beanstalk since it hides most of the infra. Use a single-instance environment (no load balancer, an ELB is NOT free tier). EC2 plus RDS is the alternative or next step.
 - [ ] Configure the DB connection via environment variables and secrets, not hardcoded.
 - [ ] Hit the live public URL from curl or the browser.
+
+**Cost plan:** Stay on free tier (EC2/RDS `micro`, single instance, no load balancer or NAT gateway) so the first 12 months are effectively $0. The billing alarm is the safety net. Tear down resources when not actively using them, and watch the 12-month free-tier expiry. (Lightsail at ~$5/month fixed is the predictable-cost fallback, but we use free-tier EC2/RDS/EB because that is what the DVA-C02 cert actually tests.)
 
 **Milestone:** Stashbox API live on the internet.
 
