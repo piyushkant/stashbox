@@ -216,3 +216,55 @@ Phase 1 stored items in memory (a map), so data vanished on every app restart. P
 
 ### The proof it works
 Create an item, restart the app, list again: the item is still there (in Phase 1 it would have been gone). The data lives in Postgres on disk, not in the app's memory.
+
+---
+
+## Key concepts: beans, dependency injection, and the layers
+
+These are the core Spring ideas behind the Controller -> Service -> Repository structure. Worth understanding once, because they apply to every Spring class.
+
+### What is a "bean"?
+A **bean** is just **an object that Spring creates and manages for you**, instead of you writing `new` / calling the constructor yourself.
+
+On startup, Spring runs a container called the **application context**. It scans your code, creates one shared instance of each managed class, and keeps them in that container. Those managed instances are "beans". When one class needs another, Spring hands over the existing bean rather than you wiring it by hand.
+
+So "bean" = "a Spring-managed object living in the container, available to be injected."
+
+### What is dependency injection (DI)?
+Instead of a class creating its own dependencies, it just **declares what it needs in its constructor**, and Spring passes them in. Example:
+
+```kotlin
+class StashItemController(private val service: StashItemService)   // "I need a service"
+class StashItemServiceImpl(private val repository: StashItemRepository)  // "I need a repository"
+```
+
+We never write `StashItemServiceImpl(...)` or `StashItemController(...)` ourselves. Spring sees the constructors, finds the matching beans, and wires the whole chain together. This is **constructor injection**, and it's what makes the code testable (in a test you pass in a fake instead).
+
+### How a class becomes a bean (two mechanisms)
+1. **Annotation + component scan** — Spring finds classes marked with a stereotype annotation and registers them:
+   - `@RestController` — a web/HTTP class (our controller).
+   - `@Service` — a business-logic class (our service impl). Functionally same as `@Component`, but the name documents intent: "this holds business logic."
+   - `@Component` — the generic "Spring-managed class"; the others are specializations of it.
+   - `@Repository` — a data-access class (adds DB exception translation).
+2. **Spring Data repository detection** — a *different* scanner. Any interface that **extends `Repository` / `JpaRepository`** is auto-detected; Spring Data generates the implementation and registers it as a bean. No annotation needed. That's why `StashItemRepository` works without `@Repository` — extending `JpaRepository` is itself the signal.
+
+Note: only the **implementation** (`StashItemServiceImpl`) is annotated, not the `StashItemService` interface. Spring needs a concrete class to instantiate; the interface is just the contract. When the controller asks for the interface, Spring injects the one class that implements it.
+
+### Why `JpaRepository` has `@NoRepositoryBean`
+Spring Data's rule is "for every interface extending `Repository`, generate an implementation + bean." But the framework's own base interfaces (`Repository`, `CrudRepository`, `JpaRepository`) also extend `Repository`, and generating beans for *those* makes no sense (they aren't tied to a specific entity). `@NoRepositoryBean` marks an interface as "a base to be extended, skip it." So:
+- `JpaRepository` has `@NoRepositoryBean` -> skipped.
+- `StashItemRepository` (extends `JpaRepository`, no `@NoRepositoryBean`) -> bean generated.
+
+You'd only add `@NoRepositoryBean` yourself if you made your own shared base repository interface for several entities to extend.
+
+### Comparison to mobile (so it clicks)
+The same ideas exist in mobile, just by different names:
+
+| Concept | Spring (backend) | iOS / mobile |
+|---|---|---|
+| Managed object | **bean** (in the application context) | a singleton/instance in a DI container (e.g. Koin, Hilt, Swinject) or one you pass around |
+| Depend on an abstraction | inject the `interface` | inject the **protocol** (iOS) / interface |
+| Wiring | Spring auto-wires via annotations + constructors | DI framework (Hilt/Koin/Swinject) or manual constructor passing |
+| Layering | Controller -> Service -> Repository | View/ViewModel -> Service/UseCase -> Repository/API |
+
+So Spring's "bean + constructor injection + depend on the interface" is the same instinct as "inject a protocol-typed dependency" in iOS. The big difference: Spring does the wiring **automatically** from annotations, whereas in mobile you often register dependencies more explicitly. The layered structure (UI -> logic -> data) is essentially identical on both sides.

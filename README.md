@@ -61,6 +61,8 @@ One backend, one database, and the Android, iOS, and web apps all read and write
 - **Hosting:** AWS. Elastic Beanstalk or EC2 for the API, RDS for the database, S3 and CloudFront for the web app and file uploads.
 - **CI/CD:** GitHub Actions to build, test, and deploy each part of the stack.
 
+**Patterns & concepts:** the backend uses a layered structure (Controller -> Service -> Repository) with Spring's beans and dependency injection. That, plus how it compares to mobile DI/protocols, is explained in [backend/README.md, "Key concepts"](./backend/README.md#key-concepts-beans-dependency-injection-and-the-layers).
+
 ---
 
 ## Tech stack
