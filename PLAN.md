@@ -8,7 +8,7 @@ A full-stack learning roadmap, ordered so each phase produces something working 
 - **Learn by using, not by reading.** Watch just enough of the AWS course (Udemy: *Ultimate AWS Certified Developer Associate 2026 DVA-C02*), then apply each service here.
 - **Backend first**, because the app and web need something real to talk to.
 - **CI/CD comes after a manual deploy works.** You can't automate a deploy you don't understand yet.
-- **No rush.** The web client is the lowest priority.
+- **Web before mobile.** Web is the genuinely new skill (no prior web experience), so it comes first. Mobile is the area of strength and is saved for last.
 
 ## Product recap
 
@@ -92,31 +92,31 @@ Goal: push code and it builds, tests, and deploys automatically. This is the fir
 
 ---
 
-## Phase 5, KMP mobile app (home turf)
+## Phase 5, Vue web client (first client, the new territory)
 
-Goal: connect Android and iOS to the live API, and use the familiar mobile layer to learn the AWS and auth side.
-
-- [ ] Create the KMP project under `mobile/`, application ID `io.github.kantpiyush.stashbox`.
-- [ ] Shared networking layer calling the Stashbox API.
-- [ ] List screen (all items), add screen, mark-done toggle, delete.
-- [ ] Optimistic UI for mark-done, and confirm it syncs across devices.
-- [ ] **5a, Android CI:** GitHub Actions builds the APK or AAB (matrix builds, artifact upload, Android SDK setup).
-- [ ] **5b, iOS CI:** GitHub Actions builds on a `macos-latest` runner with manual code signing. This is the biggest jump from Bitrise, since there's no Workflow Editor doing signing for you.
-
-**Milestone:** both mobile apps talk to the live API, and both build in CI.
-
----
-
-## Phase 6, Vue web client (lowest priority)
-
-Goal: a third client on the same API, plus more AWS practice.
+Goal: build the first client on the API. Web comes before mobile because it's the genuinely new skill to learn (no prior web experience); mobile is saved for last as the area of strength.
 
 - [ ] Vue 3 plus Vite SPA under `web/` consuming the Stashbox API.
 - [ ] List, add, mark-done, and delete UI.
 - [ ] Deploy to S3 and CloudFront.
 - [ ] GitHub Actions job: Node setup, build, `aws s3 sync`, CloudFront cache invalidation.
 
-**Milestone:** add an item on the phone, refresh the website, and it's there.
+**Milestone:** a working web app reading and writing the same data as the API.
+
+---
+
+## Phase 6, KMP mobile app (home turf, saved for last)
+
+Goal: connect Android and iOS to the live API. Mobile is the area of strength, so it comes last and reuses everything already standing.
+
+- [ ] Create the KMP project under `mobile/`, application ID `io.github.kantpiyush.stashbox`.
+- [ ] Shared networking layer calling the Stashbox API.
+- [ ] List screen (all items), add screen, mark-done toggle, delete.
+- [ ] Optimistic UI for mark-done, and confirm it syncs across devices.
+- [ ] **6a, Android CI:** GitHub Actions builds the APK or AAB (matrix builds, artifact upload, Android SDK setup).
+- [ ] **6b, iOS CI:** GitHub Actions builds on a `macos-latest` runner with manual code signing. This is the biggest jump from Bitrise, since there's no Workflow Editor doing signing for you.
+
+**Milestone:** add an item on the web app, open the phone, and it's there. Both mobile apps build in CI.
 
 ---
 
@@ -139,9 +139,9 @@ Goal: complete the dev-to-live lifecycle.
 |---|---|---|
 | 4a | Backend: test and build | workflows, jobs, triggers, caching |
 | 4b | Backend: deploy to AWS | secrets, environments, deploy |
-| 5a | Android: build APK or AAB | matrix builds, artifacts, SDK setup |
-| 5b | iOS: build on macOS | `runs-on: macos`, manual code signing |
-| 6 | Web: deploy to S3 and CloudFront | Node setup, `aws s3 sync`, cache invalidation |
+| 5 | Web: deploy to S3 and CloudFront | Node setup, `aws s3 sync`, cache invalidation |
+| 6a | Android: build APK or AAB | matrix builds, artifacts, SDK setup |
+| 6b | iOS: build on macOS | `runs-on: macos`, manual code signing |
 
 ---
 
@@ -155,7 +155,7 @@ Using the Udemy AWS DVA-C02 course (34 sections total). The course is built for 
 |---|---|---|
 | AWS setup (Phase 3) | S1 Intro, S3 Getting Started, S4 IAM & AWS CLI | Create AWS account, set up IAM users/roles (never use root), install + configure AWS CLI |
 | Deploy backend (Phase 3) | S5 EC2 Fundamentals, S8 RDS + Aurora + ElastiCache, S17 Elastic Beanstalk | RDS for managed Postgres; Elastic Beanstalk to deploy the Spring Boot jar (watch EC2 first, EB sits on top) |
-| Deploy web (Phase 6) | S11 S3 Intro, S14 S3 Security, S15 CloudFront | Host the Vue static site on S3, serve via CloudFront |
+| Deploy web (Phase 5) | S11 S3 Intro, S14 S3 Security, S15 CloudFront | Host the Vue static site on S3, serve via CloudFront |
 | File uploads (Phase 7) | S13 Advanced S3, S12 CLI/SDK/IAM Roles | Presigned URLs to upload attachments to S3 |
 | Auth (Phase 7) | S27 Cognito | Login + per-user data across all three clients |
 | Optional, once live | S20 CloudWatch / X-Ray / CloudTrail | Logs and monitoring (nice to have, not required to ship) |
