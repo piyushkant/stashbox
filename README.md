@@ -1,30 +1,31 @@
 # Stashbox
 
-A full-stack personal project: **stash Slack messages (and other links) that you need to act on later** — either a task to do or a message to reply to — and see them synced across mobile, web, and a shared backend.
+A full-stack personal project. The idea is to stash Slack messages (and other links) that you need to act on later, either a task to do or a message to reply to, and see them synced across mobile, web, and a shared backend.
 
-This is a **learn-by-building** project. The goal is to grow from senior mobile developer into full-stack by implementing every layer of a real product: shared backend, two mobile clients, a web client, cloud hosting, and CI/CD — taken all the way to published apps.
+This is a learn-by-building project. The goal is to grow from senior mobile developer into full-stack by actually implementing every layer of a real product: a shared backend, two mobile clients, a web client, cloud hosting, and CI/CD, taken all the way to published apps.
 
 ---
 
 ## What it does
 
-You collect a lot of Slack messages that are really to-dos: *"I need to do this"* or *"I need to reply to this later."* Stashbox lets you **stash** those as items, mark their status, and access them from any device.
+I collect a lot of Slack messages that are really to-dos: "I need to do this" or "I need to reply to this later." Stashbox lets me stash those as items, mark their status, and get to them from any device.
 
-Core functionality (built incrementally):
+Core functionality (built up bit by bit):
 
-- **Capture** an item: free-text note + a link (e.g. a Slack message URL).
-- **Status** per item: `TODO` (need to do something) / `REPLY_LATER` (need to reply) / `DONE`.
-- **List & filter** items by status across all clients.
-- **Mark done / update** an item — state syncs to every client.
+- **Capture** an item: a free-text note plus a link (for example a Slack message URL).
+- **Status** per item: `TODO` (need to do something), `REPLY_LATER` (need to reply), or `DONE`.
+- **List and filter** items by status across all clients.
+- **Mark done or update** an item, and the state syncs to every client.
 - **Delete** an item.
 
-One backend, one database — **Android, iOS, and the web app all read/write the same data.**
+One backend, one database, and the Android, iOS, and web apps all read and write the same data.
 
 ### Planned extensions (the model is designed to grow into these)
-- User accounts & login (auth), items scoped per user
-- Image / file attachments on an item (stored in cloud object storage)
-- Tags / categories (table relationships)
-- Search, sorting, due dates, reminders/notifications
+
+- User accounts and login (auth), with items scoped per user
+- Image or file attachments on an item, stored in cloud object storage
+- Tags and categories (table relationships)
+- Search, sorting, due dates, reminders and notifications
 
 ---
 
@@ -50,15 +51,15 @@ One backend, one database — **Android, iOS, and the web app all read/write the
                         │   PostgreSQL (RDS)    │
                         └──────────────────────┘
 
-           Hosted on AWS · CI/CD via GitHub Actions
+           Hosted on AWS, CI/CD via GitHub Actions
 ```
 
-- **Mobile (KMP):** shared Kotlin business logic; Compose Multiplatform / native UI for Android and iOS.
-- **Web:** Vue 3 + Vite SPA consuming the same REST API.
-- **Backend:** Kotlin + Spring Boot REST API.
-- **Database:** PostgreSQL (local via Docker; AWS RDS in the cloud).
-- **Hosting:** AWS (Elastic Beanstalk / EC2 for the API, RDS for the DB, S3 + CloudFront for the web app and file uploads).
-- **CI/CD:** GitHub Actions — build, test, and deploy each part of the stack.
+- **Mobile (KMP):** shared Kotlin business logic, with Compose Multiplatform and native UI for Android and iOS.
+- **Web:** Vue 3 plus Vite SPA consuming the same REST API.
+- **Backend:** Kotlin plus Spring Boot REST API.
+- **Database:** PostgreSQL (local via Docker, AWS RDS in the cloud).
+- **Hosting:** AWS. Elastic Beanstalk or EC2 for the API, RDS for the database, S3 and CloudFront for the web app and file uploads.
+- **CI/CD:** GitHub Actions to build, test, and deploy each part of the stack.
 
 ---
 
@@ -68,13 +69,13 @@ One backend, one database — **Android, iOS, and the web app all read/write the
 |---|---|
 | Mobile shared logic | Kotlin Multiplatform (KMP) |
 | Android UI | Jetbrains Compose Multiplatform |
-| iOS UI | SwiftUI (+ KMP shared module) |
-| Web | Vue 3 + Vite |
-| Backend | Kotlin + Spring Boot |
-| Persistence | Spring Data JPA + PostgreSQL |
-| Auth (later) | AWS Cognito / JWT |
+| iOS UI | SwiftUI (plus KMP shared module) |
+| Web | Vue 3 plus Vite |
+| Backend | Kotlin plus Spring Boot |
+| Persistence | Spring Data JPA plus PostgreSQL |
+| Auth (later) | AWS Cognito or JWT |
 | Hosting | AWS (Elastic Beanstalk/EC2, RDS, S3, CloudFront) |
-| Object storage (later) | AWS S3 (image/file uploads) |
+| Object storage (later) | AWS S3 (image and file uploads) |
 | CI/CD | GitHub Actions |
 | Container (local DB) | Docker |
 
@@ -84,8 +85,8 @@ One backend, one database — **Android, iOS, and the web app all read/write the
 
 - **App name:** Stashbox
 - **Bundle / Application ID (all platforms):** `io.github.kantpiyush.stashbox`
-  - Valid on Android (no hyphens/underscores, each segment starts with a letter), iOS, and used as the backend base package.
-  - Based on the GitHub identity to guarantee global uniqueness without owning a domain.
+  - Valid on Android (no hyphens or underscores, each segment starts with a letter), valid on iOS, and used as the backend base package.
+  - Based on the GitHub identity so it stays globally unique without owning a domain.
 
 ---
 
@@ -102,7 +103,7 @@ stashbox/
 └── README.md
 ```
 
-A monorepo is used intentionally: it keeps the whole stack in one place so the full flow (DB → API → clients → deploy) is easy to see and wire together while learning.
+I went with a monorepo on purpose. It keeps the whole stack in one place, so the full flow (DB to API to clients to deploy) is easy to see and wire together while learning.
 
 ---
 
@@ -112,19 +113,19 @@ A single `StashItem` entity, designed to grow:
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | UUID / Long | Primary key |
-| `text` | String | The note / context you jot down |
+| `id` | UUID or Long | Primary key |
+| `text` | String | The note or context you jot down |
 | `link` | String? | The Slack message (or other) URL |
-| `status` | Enum | `TODO` / `REPLY_LATER` / `DONE` |
+| `status` | Enum | `TODO`, `REPLY_LATER`, or `DONE` |
 | `createdAt` | Timestamp | |
 | `userId` | (later) | For per-user data once auth is added |
-| `attachmentUrl` | (later) | For S3 image/file uploads |
+| `attachmentUrl` | (later) | For S3 image and file uploads |
 
 ---
 
 ## Development approach
 
-Build a **thin vertical slice end-to-end first** (DB → API → one client screen → deployed), then thicken it. Learn each new piece by using it in the project rather than studying it in isolation. See **[PLAN.md](./PLAN.md)** for the full phased roadmap.
+Build a thin vertical slice end-to-end first (DB to API to one client screen to deployed), then thicken it. Learn each new piece by using it in the project rather than studying it in isolation. See [PLAN.md](./PLAN.md) for the full phased roadmap.
 
 ---
 
