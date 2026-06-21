@@ -64,9 +64,47 @@ Goal: a real database behind the API.
 
 ---
 
-## Phase 3, Deploy backend to AWS (first real cloud milestone)
+## AI track (Python + local LLM), Phases 3-5
 
-Goal: the API reachable at a public URL. This is where the AWS course pays off, and where AWS first enters the project.
+Goal: learn Python, the AI ecosystem, and how LLMs actually run, by adding AI features to the backend. This is for learning, not for polished/complex AI results. It comes right after persistence and before the frontend, because the AI work is backend-like (the LLM is just a service the backend calls) and runs fully locally. The natural Stashbox feature: summarize / categorize / suggest-a-reply for a stashed item.
+
+How it fits the architecture: an LLM is just another service the backend calls. Flow:
+`Kotlin backend -> Python AI service (FastAPI) -> LLM (local Ollama / Llama) -> text back -> stored on the item`.
+Clients never call the LLM directly (keeps keys/control server-side).
+
+**LLM stays local, not on AWS (decided 2026-06-21).** Running an LLM in the cloud needs an expensive GPU instance (not free-tier), so the model runs only on the Mac via Ollama. Consequence: when the backend is deployed to AWS (Phase 6), the AI feature is a local-only / dev-only capability. That's an accepted limitation for a learning project, the point is to learn how LLMs run, not to serve AI in production.
+
+### Phase 3, Local LLM basics
+
+- [ ] Install **Ollama** (the "Docker for LLMs", one command to pull + run a model locally). Pairs with the Docker skill from Phase 2.
+- [ ] Pull a small **Llama** model and talk to it from the terminal. M2 Max handles this well: start with `llama3.2:3b` (fast), then try `llama3.1:8b` (better quality). Swapping models is part of the learning. (Llama is the most popular choice for individual learners.)
+- [ ] Understand the local API: Ollama serves on `http://localhost:11434`, called with the same HTTP/JSON pattern as any other service.
+
+**Milestone:** a Llama model running locally on the Mac, answering prompts.
+
+### Phase 4, Python AI service (FastAPI)
+
+- [ ] Create a small Python service under a new top-level folder (e.g. `ai/`) using **FastAPI** (Python's equivalent of Spring Boot).
+- [ ] One endpoint, e.g. `POST /summarize`, that takes text and returns a summary by calling the local Ollama model.
+- [ ] Learn the Python basics + FastAPI along the way (this is where Python enters the project).
+
+**Milestone:** a Python service that summarizes text via the local LLM.
+
+### Phase 5, Wire AI into the backend
+
+- [ ] Kotlin backend calls the Python AI service to summarize/categorize a stashed item.
+- [ ] Store the AI result on the item and expose it through the API (the UI button comes later, once the web/mobile clients exist).
+- [ ] Later/optional: swap local Ollama for a cloud LLM API and compare; add semantic search with embeddings + a vector database (the more advanced AI skill).
+
+**Milestone:** AI summarize/categorize working end to end on the backend, on real stashed items.
+
+Note on hardware: local models need RAM; the M2 Max is well-suited (unified memory lets the GPU use system RAM). 3B-8B Llama models run comfortably. A cloud API is the fallback if a model is too slow.
+
+---
+
+## Phase 6, Deploy backend to AWS (first real cloud milestone)
+
+Goal: the API reachable at a public URL. This is where the AWS course pays off, and where AWS first enters the project. (The AI/LLM feature stays local, see the AI track note, so what gets deployed is the core CRUD backend.)
 
 - [ ] Set up an AWS free-tier account. The Udemy course covers this (S3 Getting Started), so create the account there, not separately. A card is required, but charges only apply above free-tier limits.
 - [ ] **FIRST, before creating any chargeable resource: set up a billing budget + alarm** (threshold ~$1-$5). The course covers this in S4. Do it the instant the account exists, billing data lags by hours, so an alarm set "after I notice a charge" is too late.
@@ -83,25 +121,25 @@ Goal: the API reachable at a public URL. This is where the AWS course pays off, 
 
 ---
 
-## Phase 4, CI/CD with GitHub Actions (backend). Actions enters here.
+## Phase 7, CI/CD with GitHub Actions (backend). Actions enters here.
 
 Goal: push code and it builds, tests, and deploys automatically. This is the first non-Bitrise pipeline.
 
-- [ ] **4a, Build and test:** a workflow on every push that runs `./gradlew test` and builds the jar.
+- [ ] **7a, Build and test:** a workflow on every push that runs `./gradlew test` and builds the jar.
   - Learn: workflows, jobs, steps, triggers (`on: push`), Gradle caching.
-- [ ] **4b, Deploy:** extend the workflow to deploy the jar to AWS on merge to `main`.
+- [ ] **7b, Deploy:** extend the workflow to deploy the jar to AWS on merge to `main`.
   - Learn: GitHub Secrets (AWS keys), environments, deploy steps.
 
 **Milestone:** push to `main` auto-deploys the backend.
 
 ---
 
-## Phase 5, Vue web client (first client, the new territory)
+## Phase 8, Vue web client (first client, the new territory)
 
 Goal: build the first client on the API. Web comes before mobile because it's the genuinely new skill to learn (no prior web experience); mobile is saved for last as the area of strength.
 
 - [ ] Vue 3 plus Vite SPA under `web/` consuming the Stashbox API.
-- [ ] List, add, mark-done, and delete UI.
+- [ ] List, add, mark-done, and delete UI. Add the "summarize this" AI action here (calls the backend, which uses the local AI service when available).
 - [ ] Deploy to S3 and CloudFront.
 - [ ] GitHub Actions job: Node setup, build, `aws s3 sync`, CloudFront cache invalidation.
 
@@ -109,7 +147,7 @@ Goal: build the first client on the API. Web comes before mobile because it's th
 
 ---
 
-## Phase 6, KMP mobile app (home turf, saved for last)
+## Phase 9, KMP mobile app (home turf, saved for last)
 
 Goal: connect Android and iOS to the live API. Mobile is the area of strength, so it comes last and reuses everything already standing.
 
@@ -117,14 +155,14 @@ Goal: connect Android and iOS to the live API. Mobile is the area of strength, s
 - [ ] Shared networking layer calling the Stashbox API.
 - [ ] List screen (all items), add screen, mark-done toggle, delete.
 - [ ] Optimistic UI for mark-done, and confirm it syncs across devices.
-- [ ] **6a, Android CI:** GitHub Actions builds the APK or AAB (matrix builds, artifact upload, Android SDK setup).
-- [ ] **6b, iOS CI:** GitHub Actions builds on a `macos-latest` runner with manual code signing. This is the biggest jump from Bitrise, since there's no Workflow Editor doing signing for you.
+- [ ] **9a, Android CI:** GitHub Actions builds the APK or AAB (matrix builds, artifact upload, Android SDK setup).
+- [ ] **9b, iOS CI:** GitHub Actions builds on a `macos-latest` runner with manual code signing. This is the biggest jump from Bitrise, since there's no Workflow Editor doing signing for you.
 
 **Milestone:** add an item on the web app, open the phone, and it's there. Both mobile apps build in CI.
 
 ---
 
-## Phase 7, Polish and publish (full lifecycle finish)
+## Phase 10, Polish and publish (full lifecycle finish)
 
 Goal: complete the dev-to-live lifecycle.
 
@@ -141,11 +179,11 @@ Goal: complete the dev-to-live lifecycle.
 
 | Stage | What you automate | New GitHub Actions concept |
 |---|---|---|
-| 4a | Backend: test and build | workflows, jobs, triggers, caching |
-| 4b | Backend: deploy to AWS | secrets, environments, deploy |
-| 5 | Web: deploy to S3 and CloudFront | Node setup, `aws s3 sync`, cache invalidation |
-| 6a | Android: build APK or AAB | matrix builds, artifacts, SDK setup |
-| 6b | iOS: build on macOS | `runs-on: macos`, manual code signing |
+| 7a | Backend: test and build | workflows, jobs, triggers, caching |
+| 7b | Backend: deploy to AWS | secrets, environments, deploy |
+| 8 | Web: deploy to S3 and CloudFront | Node setup, `aws s3 sync`, cache invalidation |
+| 9a | Android: build APK or AAB | matrix builds, artifacts, SDK setup |
+| 9b | iOS: build on macOS | `runs-on: macos`, manual code signing |
 
 ---
 
@@ -157,11 +195,11 @@ Using the Udemy AWS DVA-C02 course (34 sections total). The course is built for 
 
 | When (phase) | Sections to watch | What you do in Stashbox |
 |---|---|---|
-| AWS setup (Phase 3) | S1 Intro, S3 Getting Started, S4 IAM & AWS CLI | Create AWS account, set up IAM users/roles (never use root), install + configure AWS CLI |
-| Deploy backend (Phase 3) | S5 EC2 Fundamentals, S8 RDS + Aurora + ElastiCache, S17 Elastic Beanstalk | RDS for managed Postgres; Elastic Beanstalk to deploy the Spring Boot jar (watch EC2 first, EB sits on top) |
-| Deploy web (Phase 5) | S11 S3 Intro, S14 S3 Security, S15 CloudFront | Host the Vue static site on S3, serve via CloudFront |
-| File uploads (Phase 7) | S13 Advanced S3, S12 CLI/SDK/IAM Roles | Presigned URLs to upload attachments to S3 |
-| Auth (Phase 7) | S27 Cognito | Login + per-user data across all three clients |
+| AWS setup (Phase 6) | S1 Intro, S3 Getting Started, S4 IAM & AWS CLI | Create AWS account, set up IAM users/roles (never use root), install + configure AWS CLI |
+| Deploy backend (Phase 6) | S5 EC2 Fundamentals, S8 RDS + Aurora + ElastiCache, S17 Elastic Beanstalk | RDS for managed Postgres; Elastic Beanstalk to deploy the Spring Boot jar (watch EC2 first, EB sits on top) |
+| Deploy web (Phase 8) | S11 S3 Intro, S14 S3 Security, S15 CloudFront | Host the Vue static site on S3, serve via CloudFront |
+| File uploads (Phase 10) | S13 Advanced S3, S12 CLI/SDK/IAM Roles | Presigned URLs to upload attachments to S3 |
+| Auth (Phase 10) | S27 Cognito | Login + per-user data across all three clients |
 | Optional, once live | S20 CloudWatch / X-Ray / CloudTrail | Logs and monitoring (nice to have, not required to ship) |
 
 **Skip for building Stashbox (watch later, cert-only):**

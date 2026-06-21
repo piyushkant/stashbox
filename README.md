@@ -67,12 +67,14 @@ One backend, one database, and the Android, iOS, and web apps all read and write
 
 | Layer | Technology |
 |---|---|
-| Mobile shared logic | Kotlin Multiplatform (KMP) |
-| Android UI | Jetbrains Compose Multiplatform |
-| iOS UI | SwiftUI (plus KMP shared module) |
+| Mobile shared logic | Kotlin Multiplatform (KMP), shared logic only |
+| Android UI | Jetpack Compose (native) |
+| iOS UI | SwiftUI (native, plus KMP shared module) |
 | Web | Vue 3 plus Vite |
 | Backend | Kotlin plus Spring Boot |
 | Persistence | Spring Data JPA plus PostgreSQL |
+| AI service | Python plus FastAPI |
+| Local LLM | Ollama running Llama (local only, not deployed) |
 | Auth (later) | AWS Cognito or JWT |
 | Hosting | AWS (Elastic Beanstalk/EC2, RDS, S3, CloudFront) |
 | Object storage (later) | AWS S3 (image and file uploads) |
