@@ -114,7 +114,7 @@ Each part has its own README with run instructions and study notes. This root RE
 | Part | What it is | Status | Details |
 |---|---|---|---|
 | [backend](./backend/README.md) | Kotlin + Spring Boot REST API, PostgreSQL via JPA | CRUD + persistence done | [backend/README.md](./backend/README.md) |
-| [ai](./ai/README.md) | Python + FastAPI service calling a local LLM (Llama via Ollama) | local LLM running (Phase 3 done); service next | [ai/README.md](./ai/README.md) |
+| [ai](./ai/README.md) | Python + FastAPI service calling a local LLM (Llama via Ollama) | LLM + /summarize service working (Phases 3-4 done) | [ai/README.md](./ai/README.md) |
 | [web](./web/README.md) | Vue 3 + Vite web client | not started (Phase 8) | [web/README.md](./web/README.md) |
 | [mobile](./mobile/README.md) | KMP app, Android (Compose) + iOS (SwiftUI) | not started (Phase 9) | [mobile/README.md](./mobile/README.md) |
 | [infra](./infra/README.md) | AWS setup, hosting, deployment config | not started (Phases 6-7) | [infra/README.md](./infra/README.md) |

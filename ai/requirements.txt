@@ -1,0 +1,9 @@
+# FastAPI: the web framework (Python's equivalent of Spring Boot for building APIs).
+fastapi==0.115.6
+
+# Uvicorn: the ASGI server that actually runs the FastAPI app (like the embedded
+# Tomcat that runs Spring Boot). "[standard]" pulls in sensible extras.
+uvicorn[standard]==0.34.0
+
+# httpx: an HTTP client, used to call the local Ollama API from our service.
+httpx==0.28.1

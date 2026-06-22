@@ -83,11 +83,11 @@ Clients never call the LLM directly (keeps keys/control server-side).
 
 ### Phase 4, Python AI service (FastAPI)
 
-- [ ] Create a small Python service under a new top-level folder (e.g. `ai/`) using **FastAPI** (Python's equivalent of Spring Boot).
-- [ ] One endpoint, e.g. `POST /summarize`, that takes text and returns a summary by calling the local Ollama model.
-- [ ] Learn the Python basics + FastAPI along the way (this is where Python enters the project).
+- [x] Create a Python service in `ai/` using **FastAPI** (Python's equivalent of Spring Boot), run with uvicorn. Python managed via pyenv 3.12.11 (Homebrew Python was broken on this macOS — expat mismatch; see ai/README.md).
+- [x] `POST /summarize` endpoint that takes text and returns a one-line summary by calling the local `llama3.1:8b` via Ollama. Plus a `/health` check.
+- [x] Learned: virtualenv/pip (vs Gradle), FastAPI structure (vs Spring), Pydantic models (vs DTOs), async, prompt engineering.
 
-**Milestone:** a Python service that summarizes text via the local LLM.
+**Milestone:** DONE. Python service summarizes text via the local LLM. Verified end to end. Setup documented in [ai/README.md](./ai/README.md).
 
 ### Phase 5, Wire AI into the backend
 

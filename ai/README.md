@@ -75,7 +75,96 @@ Aside: Google's **Gemini** (from a Google AI Pro subscription) is cloud-only and
 
 ---
 
-## Phase 4-5 (planned)
+## Phase 4: Python + FastAPI service (DONE)
 
-- **Phase 4:** a FastAPI service here with a `POST /summarize` endpoint that calls `llama3.1:8b` via the Ollama API above.
-- **Phase 5:** the Kotlin backend calls this service to summarize/categorize an item.
+A small Python web service that exposes `POST /summarize`: it takes text, calls the local Llama model, and returns a one-line summary. FastAPI is Python's equivalent of Spring Boot.
+
+### Files in this folder
+
+Committed (the project):
+- `main.py` — the FastAPI service (the `/summarize` and `/health` endpoints).
+- `requirements.txt` — the dependency list with versions (the "recipe", like `build.gradle.kts`).
+- `.python-version` — pins this folder to Python 3.12.11 for pyenv (see below).
+- `README.md` — this file.
+
+Ignored (generated, never committed — recreated from `requirements.txt`):
+- `.venv/` — the virtual environment (~38 MB of installed packages).
+- `__pycache__/` — Python bytecode cache.
+
+### Setup on a new Mac (from scratch)
+
+Important gotcha we hit: on current macOS, **Homebrew's prebuilt Python (3.12 and 3.14) was broken** — a `pyexpat` / system `libexpat` symbol mismatch (`Symbol not found: _XML_SetAllocTrackerActivationThreshold`). The Homebrew Python links against the macOS system expat, which is older than the build expects, so `python3 -m venv` and `pip` fail. The fix is **pyenv**, which compiles Python from source against its own libraries, sidestepping the system mismatch. (Expect to hit the same thing on the new Mac.)
+
+```bash
+# 1. install pyenv (skip if already installed: `which pyenv`)
+brew install pyenv
+
+# pyenv shell setup (one-time): add to ~/.zshrc, then restart the terminal
+#   export PYENV_ROOT="$HOME/.pyenv"
+#   export PATH="$PYENV_ROOT/bin:$PATH"
+#   eval "$(pyenv init -)"
+
+# 2. install a stable Python from source (compiles; takes a few minutes)
+pyenv install 3.12.11
+
+# 3. in the ai/ folder, pin this Python (creates/uses .python-version)
+cd ai
+pyenv local 3.12.11
+python -c "import pyexpat; print('pyexpat OK')"   # sanity check, should print OK
+
+# 4. create the virtual environment (per-project dependency isolation, like Gradle)
+~/.pyenv/versions/3.12.11/bin/python -m venv .venv
+
+# 5. install dependencies from the recipe into the venv
+.venv/bin/pip install -r requirements.txt
+```
+
+Why a virtual environment: Python has no built-in per-project isolation; by default `pip` installs into one shared global location, causing version conflicts between projects. A venv gives `ai/` its own private Python + packages. The `.venv/bin/...` prefix runs the venv's Python/pip without having to "activate" it (activation also works: `source .venv/bin/activate`, then just `python`/`pip`; `deactivate` to exit).
+
+### Run the service
+
+```bash
+cd ai
+.venv/bin/uvicorn main:app --port 8000 --reload
+```
+
+- `uvicorn` is the server that runs the app (like the embedded Tomcat for Spring Boot).
+- `main:app` means "in `main.py`, run the `app` object".
+- `--reload` auto-restarts on code changes (handy while developing).
+- The service listens on `http://localhost:8000`. Ollama must also be running (`brew services start ollama`).
+
+Stop with `Ctrl+C`.
+
+### Try the endpoints
+
+```bash
+# health check
+curl -s http://localhost:8000/health | jq
+
+# summarize some text (calls the local Llama under the hood)
+curl -s -X POST http://localhost:8000/summarize \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Hey, can you reply to the PM about the Q3 launch plan and confirm the timeline by Friday? Also need the budget numbers."}' | jq
+# -> {"summary":"Please confirm the Q3 launch plan timeline by Friday and provide budget numbers."}
+```
+
+FastAPI also auto-generates interactive API docs at `http://localhost:8000/docs` while the service runs — open it in a browser to try endpoints without curl.
+
+### How `main.py` maps to Spring Boot
+
+| FastAPI / Python | Spring Boot / Kotlin |
+|---|---|
+| `app = FastAPI()` | the Spring Boot application |
+| `uvicorn` | embedded Tomcat |
+| `@app.post("/summarize")` | `@PostMapping("/summarize")` |
+| Pydantic `BaseModel` (`SummarizeRequest`) | a request DTO / `@RequestBody` data class |
+| `requirements.txt` | `build.gradle.kts` dependencies |
+| `.venv/` | Gradle's per-project dependency isolation |
+
+The service calls Ollama with the same `POST /api/generate` shown in the Phase 3 section. The prompt tells the model to "reply with only the summary, no preamble" — that wording (prompt engineering) is why the output is clean rather than chatty.
+
+---
+
+## Phase 5 (planned)
+
+- The Kotlin backend calls this Python service over HTTP to summarize/categorize an item, then stores/returns the result. Teaches services in different languages talking to each other.

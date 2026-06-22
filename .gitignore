@@ -41,6 +41,15 @@ dist/
 .env.*
 !.env.example
 
+# Python / FastAPI (ai service)
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# note: requirements.txt and .python-version ARE committed (the recipe),
+# only the generated .venv/ and caches are ignored
+
 # AWS / secrets
 *.pem
 .aws-credentials
