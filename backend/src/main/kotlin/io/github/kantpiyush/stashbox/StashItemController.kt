@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/items")
 class StashItemController(
     private val service: StashItemService,
+    private val aiSummaryClient: AiSummaryClient,
 ) {
     // GET /items -> list every stashed item.
     // Example:
@@ -90,5 +91,21 @@ class StashItemController(
         } else {
             ResponseEntity.notFound().build()
         }
+    }
+
+    // POST /items/{id}/summarize -> summarize an item's text using the AI service,
+    // store the summary on the item, and return the updated item.
+    // Backend -> Python AI service (/summarize) -> Ollama -> summary. 404 if missing.
+    // Example:
+    //   curl -s -X POST http://localhost:8080/items/<id>/summarize | jq
+    //   -> {"id":"...","text":"...","summary":"...", ...}
+    @PostMapping("/{id}/summarize")
+    fun summarize(@PathVariable id: String): ResponseEntity<StashItem> {
+        val item = service.findById(id)
+            ?: return ResponseEntity.notFound().build()
+
+        item.summary = aiSummaryClient.summarize(item.text)
+        val saved = service.save(item)
+        return ResponseEntity.ok(saved)
     }
 }

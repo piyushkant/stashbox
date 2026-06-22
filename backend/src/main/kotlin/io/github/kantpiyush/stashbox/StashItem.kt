@@ -33,6 +33,11 @@ class StashItem(
 
 	@Column(nullable = false)
 	var createdAt: Instant = Instant.now(),
+
+	// AI-generated summary of `text`. Null until the item has been summarized.
+	// (Phase 5: filled by POST /items/{id}/summarize, which calls the AI service.)
+	@Column(columnDefinition = "text")
+	var summary: String? = null,
 )
 
 // What the client sends when creating or updating an item.

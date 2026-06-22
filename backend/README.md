@@ -139,10 +139,37 @@ Status values: `OPEN` or `DONE`. (The DELETE call keeps `-i` and no `jq`, since 
 
 ## Structure (Controller -> Service -> Repository)
 
-- `StashItem.kt` — the JPA entity (`StashItem`, `StashStatus`) plus the `StashItemRequest` DTO for incoming JSON.
+- `StashItem.kt` — the JPA entity (`StashItem`, `StashStatus`) plus the `StashItemRequest` DTO for incoming JSON. Has a nullable `summary` field, filled by the AI summarize endpoint.
 - `StashItemRepository.kt` — Spring Data JPA repository (interface); CRUD methods are generated for free.
 - `StashItemService.kt` — `StashItemService` interface + `StashItemServiceImpl`. Business logic lives here; controllers depend on the interface.
 - `StashItemController.kt` — the REST endpoints (HTTP only), delegates to the service.
+- `AiSummaryClient.kt` — `AiSummaryClient` interface + `AiSummaryClientImpl`. Calls the Python AI service (Phase 5).
+
+## AI summarize (Phase 5): calling the Python service
+
+The new idea here: the backend makes an **outbound** HTTP call. Until now it only *received* requests; the summarize feature makes it *send* one to the Python AI service (the same way `ai/main.py` calls Ollama). The chain is:
+
+`POST /items/{id}/summarize` -> backend -> Python AI service (`:8000/summarize`) -> Ollama (`:11434`) -> summary -> stored on the item.
+
+```bash
+# all three must be running: backend (8080), python ai (8000), ollama (11434)
+ID=$(curl -s -X POST http://localhost:8080/items \
+  -H "Content-Type: application/json" \
+  -d '{"text":"reply to PM about Q3 launch by Friday, need budget approved","status":"OPEN"}' | jq -r '.id')
+
+curl -s -X POST "http://localhost:8080/items/$ID/summarize" | jq   # fills + stores .summary
+curl -s "http://localhost:8080/items/$ID" | jq '{id, summary}'      # persists across calls/restarts
+```
+
+How it's wired:
+- `application.properties` holds `stashbox.ai.base-url=http://localhost:8000` (not hardcoded, so it can point elsewhere later, e.g. an LLM box on another machine).
+- `AiSummaryClientImpl` uses Spring's **`RestClient`** (the modern synchronous HTTP client, included with `spring-boot-starter-web`, no extra dependency) to POST to `/summarize`.
+- It's annotated **`@Component`**, not `@Service`. `@Component` is the generic "Spring-managed bean" annotation; `@Service`/`@Repository`/`@RestController` are specializations of it that document intent. This class is integration plumbing (an outbound HTTP adapter), not domain logic, so the generic `@Component` fits. Functionally it registers + injects the same way.
+- It's behind an `interface` (per our convention) so a fake can be injected in tests, letting the controller be tested without a real LLM.
+
+Two integration gotchas we hit (worth remembering):
+- Use Spring's injected `RestClient.Builder`, not the static `RestClient.builder()`, so the JSON serializer is properly configured.
+- We force `SimpleClientHttpRequestFactory` on the `RestClient`. The default JDK HttpClient sent a connection-upgrade header that uvicorn rejected ("Invalid HTTP request"); the simple factory sends a clean request.
 
 ## Inspect the database directly
 

@@ -91,11 +91,11 @@ Clients never call the LLM directly (keeps keys/control server-side).
 
 ### Phase 5, Wire AI into the backend
 
-- [ ] Kotlin backend calls the Python AI service to summarize/categorize a stashed item.
-- [ ] Store the AI result on the item and expose it through the API (the UI button comes later, once the web/mobile clients exist).
+- [x] Kotlin backend calls the Python AI service (`AiSummaryClient` using Spring `RestClient`) via `POST /items/{id}/summarize`. Learned: outbound HTTP from the backend, `@Component`, and two integration gotchas (use injected `RestClient.Builder`; force `SimpleClientHttpRequestFactory` so uvicorn accepts the request).
+- [x] Store the AI result on the item (`summary` field on `StashItem`) and expose it through the API. Verified the summary persists.
 - [ ] Later/optional: swap local Ollama for a cloud LLM API and compare; add semantic search with embeddings + a vector database (the more advanced AI skill).
 
-**Milestone:** AI summarize/categorize working end to end on the backend, on real stashed items.
+**Milestone:** DONE. AI summarize working end to end on real stashed items (backend -> Python service -> Ollama), summary stored on the item.
 
 Note on hardware: local models need RAM; the M2 Max is well-suited (unified memory lets the GPU use system RAM). 3B-8B Llama models run comfortably. A cloud API is the fallback if a model is too slow.
 

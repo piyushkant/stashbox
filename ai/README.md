@@ -178,6 +178,9 @@ The service calls Ollama with the same `POST /api/generate` shown in the Phase 3
 
 ---
 
-## Phase 5 (planned)
+## Phase 5: backend calls this service (DONE)
 
-- The Kotlin backend calls this Python service over HTTP to summarize/categorize an item, then stores/returns the result. Teaches services in different languages talking to each other.
+The Kotlin backend now calls this Python service over HTTP. Chain:
+`POST /items/{id}/summarize` (backend :8080) -> this service (`/summarize` :8000) -> Ollama (:11434) -> summary -> stored on the item.
+
+So to use the feature end to end, three things must be running: Ollama, this AI service (`.venv/bin/uvicorn main:app --port 8000`), and the backend. See `backend/README.md` ("AI summarize") for the backend side and the integration gotchas. This taught services in different languages (Kotlin <-> Python) talking over HTTP.
