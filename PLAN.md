@@ -75,11 +75,11 @@ Clients never call the LLM directly (keeps keys/control server-side).
 
 ### Phase 3, Local LLM basics
 
-- [ ] Install **Ollama** (the "Docker for LLMs", one command to pull + run a model locally). Pairs with the Docker skill from Phase 2.
-- [ ] Pull a small **Llama** model and talk to it from the terminal. M2 Max handles this well: start with `llama3.2:3b` (fast), then try `llama3.1:8b` (better quality). Swapping models is part of the learning. (Llama is the most popular choice for individual learners.)
-- [ ] Understand the local API: Ollama serves on `http://localhost:11434`, called with the same HTTP/JSON pattern as any other service.
+- [x] Install **Ollama** (the "Docker for LLMs", one command to pull + run a model locally). Installed via Homebrew, server runs on port 11434.
+- [x] Pull models and talk to them from the terminal + via the API. Tried `llama3.2:3b`, `llama3.1:8b`, and Google's `gemma2:9b`; compared speed/quality/personality. **Decided on `llama3.1:8b` as the default** (accurate + concise for summaries, ~47 tok/s; the 3B cut corners, Gemma was too chatty/emoji-y for a summary).
+- [x] Understand the local API: Ollama serves on `http://localhost:11434`, called with the same HTTP/JSON pattern as any other service.
 
-**Milestone:** a Llama model running locally on the Mac, answering prompts.
+**Milestone:** DONE. Llama running locally, answering prompts; default model chosen. Setup + comparison documented in [ai/README.md](./ai/README.md).
 
 ### Phase 4, Python AI service (FastAPI)
 
