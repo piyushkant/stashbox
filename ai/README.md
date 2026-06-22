@@ -121,6 +121,19 @@ python -c "import pyexpat; print('pyexpat OK')"   # sanity check, should print O
 
 Why a virtual environment: Python has no built-in per-project isolation; by default `pip` installs into one shared global location, causing version conflicts between projects. A venv gives `ai/` its own private Python + packages. The `.venv/bin/...` prefix runs the venv's Python/pip without having to "activate" it (activation also works: `source .venv/bin/activate`, then just `python`/`pip`; `deactivate` to exit).
 
+### Point IntelliJ IDEA at the venv (so imports resolve)
+
+This is a monorepo (Kotlin backend + Python ai) opened at the repo root. IntelliJ needs to be told which Python to use for the Python files, otherwise `import fastapi` / `httpx` / `pydantic` show red "No module named ..." underlines even though the code runs fine from the terminal. This is cosmetic (the service still runs), but fixing it gives autocomplete and removes the warnings.
+
+1. Install the **Python** plugin (full one by JetBrains, not "Community Edition") if IntelliJ prompts; restart.
+2. **File -> Project Structure** (`Cmd+;`) -> **Platform Settings -> SDKs** -> click **+** -> **Add Python SDK from disk...**.
+3. Choose **Select existing**, Type **Python**, and set the path to `~/stashbox/ai/.venv/bin/python`. OK. (It should read "Python 3.12 (...) virtual environment".)
+4. **Project Settings -> Modules -> stashbox -> Dependencies** tab -> set **Module SDK** to the new "Python 3.12 (stashbox)". Apply.
+5. Also mark `ai/.venv` as an **Excluded Folder** (Modules -> Sources tab) so the IDE doesn't index the thousands of package files.
+6. OK, wait for indexing; the red import underlines disappear.
+
+Note: do NOT pick the system/Homebrew Python here, it must be the `.venv/bin/python` (the working 3.12.11 with our packages).
+
 ### Run the service
 
 ```bash
