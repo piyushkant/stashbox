@@ -27,6 +27,13 @@ This project runs on a **personal Claude Pro subscription, Sonnet-first**. Stay 
 - **Next:** Phase 6 — deploy the backend to AWS (free-tier RDS + Elastic Beanstalk). Set a billing alarm *before* creating any chargeable resource.
 - **Not started:** Phase 7 (GitHub Actions CI/CD), Phase 8 (Vue web client), Phase 9 (KMP mobile), Phase 10 (auth, S3 attachments, store publishing).
 
+## Repo & git setup
+
+- **Home:** `github.com/piyushkant/stashbox` (public) — the `origin` remote, on the owner's **personal** GitHub portfolio account. Commits are attributed here.
+- **Backup:** the `backup` remote points at the older `kant-piyush/stashbox` (private). Don't push there in normal work; it's an untouched safety copy.
+- **Commit identity is repo-local:** name "Piyush Kant", email `piyush.kant.it@gmail.com` (verified on `piyushkant`, so commits show on the contribution graph). The global git identity is a *work* email and must stay untouched — never run `git config --global` here.
+- **Push auth:** HTTPS via the `gh` CLI (active account `piyushkant`). No SSH key needed for this repo.
+
 ## Conventions
 
 - **App / bundle ID (all platforms):** `io.github.kantpiyush.stashbox`
