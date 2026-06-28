@@ -23,9 +23,9 @@ This project runs on a **personal Claude Pro subscription, Sonnet-first**. Stay 
 
 ## Current status (update as phases complete)
 
-- **Done:** Phase 0–2 (Spring Boot backend, full CRUD, PostgreSQL via JPA, layered Controller→Service→Repository) and the AI track Phases 3–5 (local Llama via Ollama, Python FastAPI `/summarize` service, wired into the backend, summary persisted on the item).
-- **Next:** Phase 6 — deploy the backend to AWS (free-tier RDS + Elastic Beanstalk). Set a billing alarm *before* creating any chargeable resource.
-- **Not started:** Phase 7 (GitHub Actions CI/CD), Phase 8 (Vue web client), Phase 9 (KMP mobile), Phase 10 (auth, S3 attachments, store publishing).
+- **Done:** Phase 0–2 (Spring Boot backend, full CRUD, PostgreSQL via JPA, layered Controller→Service→Repository), AI track Phases 3–5 (local Llama via Ollama, Python FastAPI `/summarize` service, wired into the backend, summary persisted on the item), and Phase 6 (RDS PostgreSQL on AWS + Elastic Beanstalk deploy, API live at `stashbox.eba-mshjk9yb.ap-northeast-1.elasticbeanstalk.com`).
+- **Next:** Phase 7 — GitHub Actions CI/CD (auto-build and deploy on push to main).
+- **Not started:** Phase 8 (Vue web client), Phase 9 (KMP mobile), Phase 10 (auth, S3 attachments, store publishing).
 
 ## Repo & git setup
 
