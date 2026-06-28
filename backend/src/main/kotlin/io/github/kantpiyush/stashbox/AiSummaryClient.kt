@@ -41,12 +41,16 @@ class AiSummaryClientImpl(
 		.build()
 
 	override fun summarize(text: String): String {
-		val response = restClient.post()
-			.uri("/summarize")                       // -> POST {baseUrl}/summarize
-			.contentType(MediaType.APPLICATION_JSON) // tell the server the body is JSON
-			.body(SummarizeRequest(text))            // serialized to JSON automatically
-			.retrieve()                              // send the request, get the response
-			.body(SummarizeResponse::class.java)     // parse JSON back into our class
-		return response?.summary ?: ""
+		return try {
+			val response = restClient.post()
+				.uri("/summarize")
+				.contentType(MediaType.APPLICATION_JSON)
+				.body(SummarizeRequest(text))
+				.retrieve()
+				.body(SummarizeResponse::class.java)
+			response?.summary ?: ""
+		} catch (e: Exception) {
+			""
+		}
 	}
 }

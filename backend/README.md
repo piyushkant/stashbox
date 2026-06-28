@@ -103,6 +103,98 @@ cd stashbox/backend
 ./gradlew bootRun                   # API at http://localhost:8080
 ```
 
+## 3. Deploy to AWS (Phase 6)
+
+This section covers deploying the backend to AWS Elastic Beanstalk backed by an RDS PostgreSQL database. Do steps 0a-0f and step 1 (Docker, local DB) only when you need to run locally. For deployment you only need the JAR build steps below.
+
+### What was set up in AWS (one-time, already done)
+
+- **RDS PostgreSQL** instance `stashbox-db` (db.t3.micro, 20 GB, free tier). Endpoint: `stashbox-db.cl2o0cs4s975.ap-northeast-1.rds.amazonaws.com`
+- **Security group** `stashbox-rds-sg` on the RDS instance (allows port 5432 inbound)
+- **Elastic Beanstalk** application `stashbox`, environment `Stashbox`, platform Corretto 25 / Java on Amazon Linux 2023 (free tier, single instance, t3.micro)
+
+### Step 1: the prod Spring profile
+
+`src/main/resources/application-prod.properties` holds the production config. It overrides `application.properties` when the `prod` profile is active.
+
+Key differences from local:
+- Points at the RDS endpoint instead of `localhost:5432`
+- Password comes from the `DB_PASSWORD` environment variable, not hardcoded
+- SQL logging is off (no point printing SQL in prod)
+
+The AI service URL is still `localhost:8000` in prod because the Python/Ollama service is local-only and never deployed to AWS. The `summarize` endpoint will just return an empty summary on AWS rather than crashing the app (the AI client wraps the call in a try-catch).
+
+### Step 2: build the JAR
+
+From the `backend/` folder:
+
+```bash
+./gradlew bootJar -x test
+```
+
+- `bootJar` builds a fat JAR (everything bundled in one file, ~54 MB). This is different from `build` which also runs tests.
+- `-x test` skips tests because the test (`contextLoads`) tries to connect to a local PostgreSQL database. On a machine where Docker / local DB is not running, the test would fail. The app itself is fine.
+- The JAR lands at `build/libs/stashbox-0.0.1-SNAPSHOT.jar`.
+
+### Step 3: upload to Elastic Beanstalk
+
+1. Go to AWS Console > Elastic Beanstalk > Environments > Stashbox
+2. Click "Upload and deploy"
+3. Upload `build/libs/stashbox-0.0.1-SNAPSHOT.jar`
+4. Give it a version label (e.g. `v2`, `v3`, etc.)
+5. Click Deploy
+
+Beanstalk uploads the JAR to S3, pushes it to the EC2 instance, and restarts the app. Takes about a minute.
+
+### Environment variables (required)
+
+These are set in Beanstalk > Environment > Configuration > Updates, monitoring, and logging > Environment properties. They are NOT in code or git.
+
+| Name | Value | Why |
+|------|-------|-----|
+| `SPRING_PROFILES_ACTIVE` | `prod` | Tells Spring Boot to load `application-prod.properties` on top of the base config. Without this, the app starts with local defaults and tries to connect to `localhost:5432`, which does not exist on the EC2 instance. |
+| `DB_PASSWORD` | your RDS master password | The prod properties file references `${DB_PASSWORD}`. Spring Boot reads this env var at startup and substitutes it into the datasource password. Keeps the password out of code and git. |
+| `SERVER_PORT` | `5000` | Beanstalk's nginx reverse proxy forwards traffic to port 5000 by default. Spring Boot defaults to port 8080 (set in `application.properties`). If these do not match, nginx gets a connection refused and the app returns 502. This env var overrides Spring Boot's port to 5000. |
+
+### What happens on first startup against RDS
+
+`spring.jpa.hibernate.ddl-auto=update` is set in the prod profile. On the very first startup, Hibernate connects to the empty `stashbox` database and creates the `stash_item` table automatically from the entity class. You do not need to run any SQL manually.
+
+### Test it is working
+
+```bash
+curl https://Stashbox.eba-mshjk9yb.ap-northeast-1.elasticbeanstalk.com/items
+# should return [] (empty array, not a connection error)
+
+# create an item
+curl -s -X POST https://Stashbox.eba-mshjk9yb.ap-northeast-1.elasticbeanstalk.com/items \
+  -H "Content-Type: application/json" \
+  -d '{"text":"test from prod","status":"OPEN"}' | jq
+```
+
+### Redeploy after code changes
+
+```bash
+# 1. make your changes
+# 2. rebuild the JAR
+./gradlew bootJar -x test
+# 3. upload the new JAR in the Beanstalk console (Upload and deploy)
+```
+
+### Debugging a 502 Bad Gateway
+
+If you get a 502, the app crashed or never started. Check logs:
+- Beanstalk console > Logs > Request logs > Last 100 lines
+- Look in `/var/log/web.stdout.log` for the Spring Boot startup output
+- Look in `/var/log/nginx/error.log` for the upstream port nginx is trying to reach
+
+Common causes:
+- Wrong port: nginx forwards to 5000, Spring starts on 8080. Fix: add `SERVER_PORT=5000` env var.
+- DB connection failed: Spring crashes immediately if it cannot reach RDS. Fix: check `stashbox-rds-sg` inbound rules allow port 5432 from Beanstalk's security group.
+- Wrong profile: if `SPRING_PROFILES_ACTIVE` is missing, the app tries `localhost:5432` and crashes.
+
+---
+
 ## Try the endpoints (full CRUD)
 
 We pipe responses through `jq` for clean, readable JSON (`-s` makes curl quiet so only the JSON shows). Install jq once with `brew install jq`.
