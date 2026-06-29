@@ -124,12 +124,12 @@ Goal: the API reachable at a public URL. This is where the AWS course pays off, 
 
 Goal: push code and it builds, tests, and deploys automatically. This is the first non-Bitrise pipeline.
 
-- [ ] **7a, Build and test:** a workflow on every push that runs `./gradlew test` and builds the jar.
-  - Learn: workflows, jobs, steps, triggers (`on: push`), Gradle caching.
-- [ ] **7b, Deploy:** extend the workflow to deploy the jar to AWS on merge to `main`.
-  - Learn: GitHub Secrets (AWS keys), environments, deploy steps.
+- [x] **7a, Build and test:** `build.yml` runs on every push, compiles Kotlin and runs all unit tests. No DB needed (pure unit tests with mocks).
+  - Learned: workflows, jobs, steps, triggers, Gradle caching, `@MockitoBean`, JUnit platform launcher.
+- [x] **7b, Deploy:** `deploy.yml` triggers on push to `main` only. Runs tests, builds JAR, deploys to Elastic Beanstalk via `einaregilsson/beanstalk-deploy@v22`.
+  - Learned: GitHub Secrets (AWS keys), IAM least privilege (`AdministratorAccess-AWSElasticBeanstalk`), version labels via commit SHA.
 
-**Milestone:** push to `main` auto-deploys the backend.
+**Milestone:** DONE. Push to `main` auto-deploys the backend to `stashbox.eba-mshjk9yb.ap-northeast-1.elasticbeanstalk.com`.
 
 ---
 

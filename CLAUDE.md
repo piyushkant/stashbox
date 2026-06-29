@@ -23,8 +23,8 @@ This project runs on a **personal Claude Pro subscription, Sonnet-first**. Stay 
 
 ## Current status (update as phases complete)
 
-- **Done:** Phase 0–2 (Spring Boot backend, full CRUD, PostgreSQL via JPA, layered Controller→Service→Repository), AI track Phases 3–5 (local Llama via Ollama, Python FastAPI `/summarize` service, wired into the backend, summary persisted on the item), and Phase 6 (RDS PostgreSQL on AWS + Elastic Beanstalk deploy, API live at `stashbox.eba-mshjk9yb.ap-northeast-1.elasticbeanstalk.com`).
-- **Next:** Phase 7 — GitHub Actions CI/CD (auto-build and deploy on push to main).
+- **Done:** Phase 0–2 (Spring Boot backend, full CRUD, PostgreSQL via JPA, layered Controller→Service→Repository), AI track Phases 3–5 (local Llama via Ollama, Python FastAPI `/summarize` service, wired into the backend, summary persisted on the item), Phase 6 (RDS PostgreSQL on AWS + Elastic Beanstalk deploy, API live at `stashbox.eba-mshjk9yb.ap-northeast-1.elasticbeanstalk.com`), and Phase 7 (GitHub Actions CI/CD: `build.yml` runs tests on every push, `deploy.yml` auto-deploys JAR to Beanstalk on push to main).
+- **Next:** AWS mock Q&A session (practice questions based on what was built: RDS, Beanstalk, IAM, deployment strategies), then Phase 8 (Vue web client).
 - **Not started:** Phase 8 (Vue web client), Phase 9 (KMP mobile), Phase 10 (auth, S3 attachments, store publishing).
 
 ## Repo & git setup
