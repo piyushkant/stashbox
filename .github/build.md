@@ -1,4 +1,4 @@
-# build.yml — Line by Line
+# build.yml: Line by Line
 
 This explains every line of `.github/workflows/build.yml`.
 
@@ -27,7 +27,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 ```
-A workflow has one or more jobs. This one is named `build`. It runs on a fresh Ubuntu Linux VM that GitHub spins up automatically. The machine is clean every time — nothing from previous runs carries over.
+A workflow has one or more jobs. This one is named `build`. It runs on a fresh Ubuntu Linux VM that GitHub spins up automatically. The machine is clean every time, nothing from previous runs carries over.
 
 ---
 
