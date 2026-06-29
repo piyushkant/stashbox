@@ -1,4 +1,4 @@
-# GitHub Actions — Stashbox CI/CD
+# GitHub Actions - Stashbox CI/CD
 
 Workflow files live here because GitHub requires the `.github/workflows/` path. There is nothing to run locally; GitHub's runners execute these on their own Linux VMs.
 
