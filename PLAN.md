@@ -137,6 +137,8 @@ Goal: push code and it builds, tests, and deploys automatically. This is the fir
 
 Goal: build the first client on the API. Web comes before mobile because it's the genuinely new skill to learn (no prior web experience); mobile is saved for last as the area of strength.
 
+**Watch before building:** S11 (S3 Introduction), S12 (AWS CLI, SDK, IAM Roles), S13 (Advanced S3), S14 (S3 Security), S15 (CloudFront). Skip S9 (Route 53), S10 (VPC), S16 (ECS/Fargate) for now, they are not needed for this phase.
+
 - [ ] Vue 3 plus Vite SPA under `web/` consuming the Stashbox API.
 - [ ] List, add, mark-done, and delete UI. Add the "summarize this" AI action here (calls the backend, which uses the local AI service when available).
 - [ ] Deploy to S3 and CloudFront.
